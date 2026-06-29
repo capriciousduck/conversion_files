@@ -382,13 +382,32 @@ files:
 #  variants:
 #  - cloud
 
-- name: user-data
-  generator: cloud-init
-  variants:
-    - cloud
+- path: /etc/cloud/cloud.cfg.d/90_dpkg.cfg
+  generator: dump
+  mode: 0644
   content: |-
-     #cloud-config
-     ssh_deletekeys: false
+    datasource_list: [ NoCloud, None ]
+  variants:
+  - cloud
+  types:
+  - vm
+
+
+- path: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+  generator: dump
+  mode: 0644
+  content: |-
+    network: {config: disabled}
+  variants:
+  - cloud
+  types:
+  - vm
+
+- path: /etc/cloud/cloud.cfg.d/99-preserve-ssh-keys.cfg
+  generator: dump
+  mode: 0644
+  content: |-
+    ssh_deletekeys: false
 
 
 - name: ext4
@@ -775,6 +794,7 @@ actions:
   variants:
   - default
   - desktop
+  - cloud
 
 - trigger: post-packages
   action: |-
